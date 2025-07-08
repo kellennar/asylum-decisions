@@ -1,0 +1,90 @@
+---
+title: "Temperature and Asylum Grant Decisions"
+author: Kellen Narke
+execute:
+    warning: false
+    message: false
+    echo: false
+---
+
+```{r}
+library(tidyverse)
+library(haven)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r}
+data <- read_dta("C:/Users/Kellen Narke/projects/temperature-decision/data/matched.dta")
+```
+
+```{r}
+all_cases <- data |>
+  filter(!is.na(avgtemp), !is.na(res))
+```
+
+```{r}
+ggplot(all_cases, aes(x = avgtemp, y = res)) +
+  geom_smooth(method = "gam", formula = y ~ s(x), se = TRUE, fill = "gray80", color = "black") +
+  labs(
+    title = "Effect of Temperature on Asylum Grant Rates",
+    x = "Case-Day Temperature",
+    y = "Probability of Grant"
+  ) +
+  theme_classic(base_size = 13) +
+  theme(
+    axis.line = element_line(color = "black"),
+    plot.title = element_text(face = "bold")
+  )+ theme(
+    plot.title.position = "plot",            # ensures proper title placement
+    plot.margin = margin(t = 20, r = 10, b = 10, l = 10)  # top/right/bottom/left in pts
+  )
+```
+
+Researchers have found that with an increase in outside temperature, there is a decrease in judges granting asylum requests. I constructed the plot above using roughly 250,000 individual asylum cases, and the average outside temperature on the day of their decision. The underlying logic is that when it is hotter, judges are more agitated, or are less vigilant in their excercise of reason. This, however, begs the question of how judges in different cities may respond to the temperature differently.
+
+```{r}
+ny_data <- data %>%
+  filter(city == "NEW YORK", !is.na(avgtemp), !is.na(res))
+
+ggplot(ny_data, aes(x = avgtemp, y = res)) +
+  geom_smooth(method = "gam", formula = y ~ s(x), se = TRUE, fill = "gray80", color = "black") +
+  labs(
+    title = "Effect of Temperature on Asylum Grant Rates (New York)",
+    x = "Case-Day Temperature",
+    y = "Probability of Grant"
+  ) +
+  theme_classic(base_size = 13) +
+  theme(
+    axis.line = element_line(color = "black"),
+    plot.title = element_text(face = "bold")
+  ) + theme(
+    plot.title.position = "plot",            # ensures proper title placement
+    plot.margin = margin(t = 20, r = 10, b = 10, l = 10)  # top/right/bottom/left in pts
+  )
+```
+
+The above plot, using roughly 50,000 asylum cases in New York City, suggests that asylum grants peak when the outside temperature is around room temperature, and thereafter decrease. A graph for Chicago, though not displayed, has a similar shape.
+
+```{r}
+la_data <- data %>%
+  filter(city == "LOS ANGELES", !is.na(avgtemp), !is.na(res))
+
+ggplot(la_data, aes(x = avgtemp, y = res)) +
+  geom_smooth(method = "gam", formula = y ~ s(x), se = TRUE, fill = "gray80", color = "black") +
+  labs(
+    title = "Effect of Temperature on Asylum Grant Rates (Los Angeles)",
+    x = "Case-Day Temperature",
+    y = "Probability of Grant"
+  ) +
+  theme_classic(base_size = 13) +
+  theme(
+    axis.line = element_line(color = "black"),
+    plot.title = element_text(face = "bold")
+  ) + theme(
+    plot.title.position = "plot",            # ensures proper title placement
+    plot.margin = margin(t = 20, r = 10, b = 10, l = 10)  # top/right/bottom/left in pts
+  )
+```
+
+For Los Angeles, which also processes about 50,000 cases, there is a peak in asylum grants when the outside temperature is around room tempeature. However, the decrease with hotter temperatures is less pronounced, perhaps indicating that judges in Los Angeles are more accustomed to the heat and their decisions are therefore less effected.

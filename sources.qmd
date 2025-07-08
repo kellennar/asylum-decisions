@@ -1,0 +1,6 @@
+---
+title: "Sources"
+format: html
+---
+
+Data provided by Anthony Heyes and Soodeh Saberian in the the [American Economic Journal](https://www.aeaweb.org/articles?id=10.1257/app.20170223). 
